@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Collaborative Drawing Board</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <div class="landing-container">
+        <div class="hero">
+            <h1 class="logo">🎨 DrawTogether</h1>
+            <p class="tagline">Real-time collaborative drawing. Create art together.</p>
+        </div>
+        
+        <div class="join-form">
+            <div class="form-group">
+                <label for="nickname">Your Nickname</label>
+                <input type="text" id="nickname" placeholder="Enter your nickname" maxlength="20">
+            </div>
+            <div class="form-group">
+                <label for="room-name">Room Name</label>
+                <input type="text" id="room-name" placeholder="Enter room name or create new">
+            </div>
+            <button id="join-btn" class="btn-primary">Join Room</button>
+        </div>
+        
+        <div class="rooms-section">
+            <h2>Active Rooms</h2>
+            <div id="rooms-list" class="rooms-list">
+                <p class="loading">Loading rooms...</p>
+            </div>
+        </div>
+        
+        <div class="features">
+            <div class="feature">
+                <span class="icon">✏️</span>
+                <h3>Draw Together</h3>
+                <p>Multiple users can draw simultaneously</p>
+            </div>
+            <div class="feature">
+                <span class="icon">📚</span>
+                <h3>Layers</h3>
+                <p>Organize your drawing with layers</p>
+            </div>
+            <div class="feature">
+                <span class="icon">💾</span>
+                <h3>Auto-Save</h3>
+                <p>Your work is saved automatically</p>
+            </div>
+            <div class="feature">
+                <span class="icon">📥</span>
+                <h3>Export</h3>
+                <p>Download your masterpiece as PNG</p>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        const nicknameInput = document.getElementById('nickname');
+        const roomInput = document.getElementById('room-name');
+        const joinBtn = document.getElementById('join-btn');
+        const roomsList = document.getElementById('rooms-list');
+        
+        // Load existing rooms
+        async function loadRooms() {
+            const response = await fetch('/api/rooms');
+            const rooms = await response.json();
+            
+            if (rooms.length === 0) {
+                roomsList.innerHTML = '<p class="empty">No active rooms. Create one!</p>';
+                return;
+            }
+            
+            roomsList.innerHTML = rooms.map(room => `
+                <div class="room-card" data-room="${room.id}">
+                    <span class="room-name">${room.name}</span>
+                    <span class="room-time">${new Date(room.updated_at * 1000).toLocaleString()}</span>
+                </div>
+            `).join('');
+            
+            document.querySelectorAll('.room-card').forEach(card => {
+                card.addEventListener('click', () => {
+                    roomInput.value = card.dataset.room;
+                });
+            });
+        }
+        
+        // Join room
+        function joinRoom() {
+            const nickname = nicknameInput.value.trim() || 'Artist_' + Math.random().toString(36).substr(2, 4);
+            const roomName = roomInput.value.trim() || 'room_' + Date.now();
+            
+            localStorage.setItem('nickname', nickname);
+            localStorage.setItem('userId', localStorage.getItem('userId') || crypto.randomUUID());
+            
+            window.location.href = `/room/${encodeURIComponent(roomName)}`;
+        }
+        
+        joinBtn.addEventListener('click', joinRoom);
+        roomInput.addEventListener('keypress', e => e.key === 'Enter' && joinRoom());
+        nicknameInput.addEventListener('keypress', e => e.key === 'Enter' && roomInput.focus());
+        
+        // Restore nickname
+        nicknameInput.value = localStorage.getItem('nickname') || '';
+        
+        loadRooms();
+    </script>
+</body>
+</html>
+

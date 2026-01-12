@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Drawing Room - {{ room_id }}</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <a href="/" class="logo-small">🎨 DrawTogether</a>
+            <span class="room-name">Room: <strong>{{ room_id }}</strong></span>
+            <div class="header-actions">
+                <button id="save-btn" class="btn-icon" title="Save">💾</button>
+                <button id="export-btn" class="btn-icon" title="Export PNG">📥</button>
+            </div>
+        </header>
+        
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Toolbar -->
+            <aside class="toolbar">
+                <div class="tool-section">
+                    <label>Brush Size</label>
+                    <input type="range" id="brush-size" min="1" max="50" value="5">
+                    <span id="size-display">5px</span>
+                </div>
+                
+                <div class="tool-section">
+                    <label>Color</label>
+                    <input type="color" id="brush-color" value="#000000">
+                    <div class="color-presets">
+                        <button class="color-btn" data-color="#000000" style="background:#000000"></button>
+                        <button class="color-btn" data-color="#FF0000" style="background:#FF0000"></button>
+                        <button class="color-btn" data-color="#00FF00" style="background:#00FF00"></button>
+                        <button class="color-btn" data-color="#0000FF" style="background:#0000FF"></button>
+                        <button class="color-btn" data-color="#FFFF00" style="background:#FFFF00"></button>
+                        <button class="color-btn" data-color="#FF00FF" style="background:#FF00FF"></button>
+                        <button class="color-btn" data-color="#00FFFF" style="background:#00FFFF"></button>
+                        <button class="color-btn" data-color="#FFFFFF" style="background:#FFFFFF"></button>
+                    </div>
+                </div>
+                
+                <div class="tool-section">
+                    <label>Tools</label>
+                    <div class="tools-grid">
+                        <button id="tool-brush" class="tool-btn active" title="Brush">✏️</button>
+                        <button id="tool-eraser" class="tool-btn" title="Eraser">🧹</button>
+                        <button id="undo-btn" class="tool-btn" title="Undo (Ctrl+Z)">↩️</button>
+                        <button id="clear-btn" class="tool-btn" title="Clear Layer">🗑️</button>
+                    </div>
+                </div>
+                
+                <div class="tool-section">
+                    <label>Layers</label>
+                    <div id="layers-panel" class="layers-panel"></div>
+                    <button id="add-layer-btn" class="btn-small">+ Add Layer</button>
+                </div>
+            </aside>
+            
+            <!-- Canvas Area -->
+            <main class="canvas-area">
+                <div id="canvas-container" class="canvas-container">
+                    <canvas id="main-canvas"></canvas>
+                    <div id="cursors-layer" class="cursors-layer"></div>
+                </div>
+            </main>
+            
+            <!-- Users Panel -->
+            <aside class="users-panel">
+                <h3>👥 Users Online</h3>
+                <ul id="users-list"></ul>
+                <div class="connection-status" id="connection-status">
+                    <span class="status-dot"></span>
+                    <span class="status-text">Connecting...</span>
+                </div>
+            </aside>
+        </div>
+    </div>
+    
+    <script src="/static/js/canvas.js"></script>
+    <script src="/static/js/app.js"></script>
+    <script>
+        const roomId = "{{ room_id }}";
+        initApp(roomId);
+    </script>
+</body>
+</html>
+
