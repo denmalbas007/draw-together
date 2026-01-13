@@ -3,62 +3,86 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Collaborative Drawing Board</title>
+    <title>DrawTogether - Real-time Collaborative Drawing</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎨</text></svg>">
 </head>
 <body>
     <div class="landing-container">
-        <div class="hero">
+        <header class="hero">
             <h1 class="logo">🎨 DrawTogether</h1>
-            <p class="tagline">Real-time collaborative drawing. Create art together.</p>
-        </div>
+            <p class="tagline">Real-time collaborative drawing. Create art together, anywhere.</p>
+        </header>
         
-        <div class="join-form">
+        <section class="join-form">
             <div class="form-group">
                 <label for="nickname">Your Nickname</label>
-                <input type="text" id="nickname" placeholder="Enter your nickname" maxlength="20">
+                <input type="text" id="nickname" placeholder="Enter your nickname" maxlength="20" autocomplete="off">
             </div>
-            <div class="form-group">
-                <label for="room-name">Room Name</label>
-                <input type="text" id="room-name" placeholder="Enter room name or create new">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="room-name">Room Name</label>
+                    <input type="text" id="room-name" placeholder="Room name" autocomplete="off">
+                </div>
+                <div class="form-group" style="flex: 0.6;">
+                    <label for="room-password">Password (optional)</label>
+                    <input type="password" id="room-password" placeholder="••••">
+                </div>
             </div>
-            <button id="join-btn" class="btn-primary">Join Room</button>
-        </div>
+            <button id="join-btn" class="btn-primary">Create / Join Room</button>
+        </section>
         
-        <div class="rooms-section">
-            <h2>Active Rooms</h2>
+        <section class="rooms-section">
+            <div class="section-header">
+                <h2>🎯 Active Rooms</h2>
+                <a href="/gallery" style="color: var(--accent-secondary); text-decoration: none;">View Gallery →</a>
+            </div>
             <div id="rooms-list" class="rooms-list">
                 <p class="loading">Loading rooms...</p>
             </div>
-        </div>
+        </section>
         
-        <div class="features">
+        <section class="features">
             <div class="feature">
                 <span class="icon">✏️</span>
                 <h3>Draw Together</h3>
-                <p>Multiple users can draw simultaneously</p>
+                <p>Multiple users simultaneously</p>
+            </div>
+            <div class="feature">
+                <span class="icon">📐</span>
+                <h3>Shape Tools</h3>
+                <p>Lines, rectangles, circles</p>
             </div>
             <div class="feature">
                 <span class="icon">📚</span>
                 <h3>Layers</h3>
-                <p>Organize your drawing with layers</p>
+                <p>Organize your artwork</p>
             </div>
             <div class="feature">
-                <span class="icon">💾</span>
-                <h3>Auto-Save</h3>
-                <p>Your work is saved automatically</p>
+                <span class="icon">💬</span>
+                <h3>Live Chat</h3>
+                <p>Communicate in real-time</p>
             </div>
             <div class="feature">
-                <span class="icon">📥</span>
-                <h3>Export</h3>
-                <p>Download your masterpiece as PNG</p>
+                <span class="icon">⏱️</span>
+                <h3>Timer</h3>
+                <p>Timed drawing sessions</p>
             </div>
-        </div>
+            <div class="feature">
+                <span class="icon">🖼️</span>
+                <h3>Gallery</h3>
+                <p>Share your masterpieces</p>
+            </div>
+        </section>
     </div>
     
     <script>
         const nicknameInput = document.getElementById('nickname');
         const roomInput = document.getElementById('room-name');
+        const passwordInput = document.getElementById('room-password');
         const joinBtn = document.getElementById('join-btn');
         const roomsList = document.getElementById('rooms-list');
         
@@ -73,26 +97,57 @@
             }
             
             roomsList.innerHTML = rooms.map(room => `
-                <div class="room-card" data-room="${room.id}">
-                    <span class="room-name">${room.name}</span>
-                    <span class="room-time">${new Date(room.updated_at * 1000).toLocaleString()}</span>
+                <div class="room-card" data-room="${room.id}" ${room.has_password ? 'data-protected="true"' : ''}>
+                    <div class="room-thumbnail">
+                        ${room.thumbnail ? `<img src="${room.thumbnail}" alt="${room.name}">` : '🎨'}
+                    </div>
+                    <div class="room-info">
+                        <div class="room-name">
+                            ${room.name}
+                            ${room.has_password ? '<span class="lock-icon">🔒</span>' : ''}
+                        </div>
+                        <div class="room-meta">
+                            <span class="room-users">
+                                <span>●</span> ${room.active_users || 0} online
+                            </span>
+                            <span>${timeAgo(room.updated_at)}</span>
+                        </div>
+                    </div>
                 </div>
             `).join('');
             
             document.querySelectorAll('.room-card').forEach(card => {
                 card.addEventListener('click', () => {
                     roomInput.value = card.dataset.room;
+                    if (card.dataset.protected) {
+                        passwordInput.focus();
+                    } else {
+                        joinRoom();
+                    }
                 });
             });
+        }
+        
+        function timeAgo(timestamp) {
+            const seconds = Math.floor(Date.now() / 1000 - timestamp);
+            if (seconds < 60) return 'just now';
+            if (seconds < 3600) return Math.floor(seconds / 60) + 'm ago';
+            if (seconds < 86400) return Math.floor(seconds / 3600) + 'h ago';
+            return Math.floor(seconds / 86400) + 'd ago';
         }
         
         // Join room
         function joinRoom() {
             const nickname = nicknameInput.value.trim() || 'Artist_' + Math.random().toString(36).substr(2, 4);
             const roomName = roomInput.value.trim() || 'room_' + Date.now();
+            const password = passwordInput.value;
             
             localStorage.setItem('nickname', nickname);
             localStorage.setItem('userId', localStorage.getItem('userId') || crypto.randomUUID());
+            
+            if (password) {
+                localStorage.setItem('room_password_' + roomName, password);
+            }
             
             window.location.href = `/room/${encodeURIComponent(roomName)}`;
         }
@@ -100,12 +155,18 @@
         joinBtn.addEventListener('click', joinRoom);
         roomInput.addEventListener('keypress', e => e.key === 'Enter' && joinRoom());
         nicknameInput.addEventListener('keypress', e => e.key === 'Enter' && roomInput.focus());
+        passwordInput.addEventListener('keypress', e => e.key === 'Enter' && joinRoom());
         
         // Restore nickname
         nicknameInput.value = localStorage.getItem('nickname') || '';
         
+        // Load theme
+        document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'dark');
+        
         loadRooms();
+        
+        // Reload rooms periodically
+        setInterval(loadRooms, 30000);
     </script>
 </body>
 </html>
-

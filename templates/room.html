@@ -3,18 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Drawing Room - {{ room_id }}</title>
+    <title>{{ room_id }} - DrawTogether</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎨</text></svg>">
 </head>
 <body>
     <div class="app-container">
         <!-- Header -->
         <header class="app-header">
             <a href="/" class="logo-small">🎨 DrawTogether</a>
-            <span class="room-name">Room: <strong>{{ room_id }}</strong></span>
+            
+            <div class="room-info-header">
+                <span class="room-name-header">{{ room_id }}</span>
+                <span class="user-count">👥 0</span>
+            </div>
+            
             <div class="header-actions">
-                <button id="save-btn" class="btn-icon" title="Save">💾</button>
-                <button id="export-btn" class="btn-icon" title="Export PNG">📥</button>
+                <button id="timer-btn" class="btn-icon" title="Start Timer">⏱️</button>
+                <button id="shortcuts-btn" class="btn-icon" title="Keyboard Shortcuts">⌨️</button>
+                <button id="theme-btn" class="btn-icon" title="Toggle Theme">🌙</button>
+                <button id="sound-btn" class="btn-icon" title="Toggle Sounds">🔊</button>
+                <button id="gallery-btn" class="btn-icon" title="Save to Gallery">🖼️</button>
+                <button id="save-btn" class="btn-icon" title="Save (Ctrl+S)">💾</button>
+                <button id="export-btn" class="btn-icon" title="Export PNG (Ctrl+E)">📥</button>
             </div>
         </header>
         
@@ -23,9 +37,11 @@
             <!-- Toolbar -->
             <aside class="toolbar">
                 <div class="tool-section">
-                    <label>Brush Size</label>
+                    <label>
+                        Brush Size
+                        <span id="size-display">5px</span>
+                    </label>
                     <input type="range" id="brush-size" min="1" max="50" value="5">
-                    <span id="size-display">5px</span>
                 </div>
                 
                 <div class="tool-section">
@@ -33,23 +49,50 @@
                     <input type="color" id="brush-color" value="#000000">
                     <div class="color-presets">
                         <button class="color-btn" data-color="#000000" style="background:#000000"></button>
-                        <button class="color-btn" data-color="#FF0000" style="background:#FF0000"></button>
-                        <button class="color-btn" data-color="#00FF00" style="background:#00FF00"></button>
-                        <button class="color-btn" data-color="#0000FF" style="background:#0000FF"></button>
-                        <button class="color-btn" data-color="#FFFF00" style="background:#FFFF00"></button>
-                        <button class="color-btn" data-color="#FF00FF" style="background:#FF00FF"></button>
-                        <button class="color-btn" data-color="#00FFFF" style="background:#00FFFF"></button>
                         <button class="color-btn" data-color="#FFFFFF" style="background:#FFFFFF"></button>
+                        <button class="color-btn" data-color="#FF3B30" style="background:#FF3B30"></button>
+                        <button class="color-btn" data-color="#FF9500" style="background:#FF9500"></button>
+                        <button class="color-btn" data-color="#FFCC00" style="background:#FFCC00"></button>
+                        <button class="color-btn" data-color="#34C759" style="background:#34C759"></button>
+                        <button class="color-btn" data-color="#007AFF" style="background:#007AFF"></button>
+                        <button class="color-btn" data-color="#5856D6" style="background:#5856D6"></button>
+                        <button class="color-btn" data-color="#AF52DE" style="background:#AF52DE"></button>
+                        <button class="color-btn" data-color="#FF2D55" style="background:#FF2D55"></button>
+                        <button class="color-btn" data-color="#8E8E93" style="background:#8E8E93"></button>
+                        <button class="color-btn" data-color="#48484A" style="background:#48484A"></button>
                     </div>
                 </div>
                 
                 <div class="tool-section">
                     <label>Tools</label>
                     <div class="tools-grid">
-                        <button id="tool-brush" class="tool-btn active" title="Brush">✏️</button>
-                        <button id="tool-eraser" class="tool-btn" title="Eraser">🧹</button>
-                        <button id="undo-btn" class="tool-btn" title="Undo (Ctrl+Z)">↩️</button>
-                        <button id="clear-btn" class="tool-btn" title="Clear Layer">🗑️</button>
+                        <button class="tool-btn active" data-tool="brush" title="Brush (B)">
+                            ✏️<span>Brush</span>
+                        </button>
+                        <button class="tool-btn" data-tool="eraser" title="Eraser (E)">
+                            🧹<span>Eraser</span>
+                        </button>
+                        <button class="tool-btn" data-tool="line" title="Line (L)">
+                            📏<span>Line</span>
+                        </button>
+                        <button class="tool-btn" data-tool="rect" title="Rectangle (R)">
+                            ⬜<span>Rect</span>
+                        </button>
+                        <button class="tool-btn" data-tool="circle" title="Circle (C)">
+                            ⭕<span>Circle</span>
+                        </button>
+                        <button class="tool-btn" data-tool="text" title="Text (T)">
+                            🔤<span>Text</span>
+                        </button>
+                        <button class="tool-btn" data-tool="fill" title="Fill (F)">
+                            🪣<span>Fill</span>
+                        </button>
+                        <button class="tool-btn" data-tool="picker" title="Color Picker (I)">
+                            💧<span>Picker</span>
+                        </button>
+                        <button class="tool-btn" id="undo-btn" title="Undo (Ctrl+Z)">
+                            ↩️<span>Undo</span>
+                        </button>
                     </div>
                 </div>
                 
@@ -57,24 +100,56 @@
                     <label>Layers</label>
                     <div id="layers-panel" class="layers-panel"></div>
                     <button id="add-layer-btn" class="btn-small">+ Add Layer</button>
+                    <button id="clear-btn" class="btn-small" style="margin-top: 6px; color: #ef4444;">🗑️ Clear Layer</button>
+                </div>
+                
+                <div class="tool-section">
+                    <label>Quick Reactions</label>
+                    <div id="stickers-grid" class="stickers-grid"></div>
                 </div>
             </aside>
             
             <!-- Canvas Area -->
             <main class="canvas-area">
+                <div id="timer-display" class="timer-display">00:00</div>
+                
                 <div id="canvas-container" class="canvas-container">
                     <canvas id="main-canvas"></canvas>
                     <div id="cursors-layer" class="cursors-layer"></div>
                 </div>
+                
+                <div class="zoom-controls">
+                    <button id="zoom-out" title="Zoom Out (-)">−</button>
+                    <span id="zoom-level" class="zoom-level">100%</span>
+                    <button id="zoom-in" title="Zoom In (+)">+</button>
+                    <button id="zoom-reset" title="Reset View (0)">⟲</button>
+                </div>
             </main>
             
-            <!-- Users Panel -->
-            <aside class="users-panel">
-                <h3>👥 Users Online</h3>
-                <ul id="users-list"></ul>
-                <div class="connection-status" id="connection-status">
-                    <span class="status-dot"></span>
-                    <span class="status-text">Connecting...</span>
+            <!-- Right Panel -->
+            <aside class="right-panel">
+                <div class="panel-tabs">
+                    <button class="panel-tab active" data-panel="users">👥 Users</button>
+                    <button class="panel-tab" data-panel="chat">💬 Chat</button>
+                </div>
+                
+                <div id="users-panel" class="panel-content active">
+                    <div class="users-panel">
+                        <h3>Online Now</h3>
+                        <ul id="users-list"></ul>
+                    </div>
+                    <div class="connection-status" id="connection-status">
+                        <span class="status-dot"></span>
+                        <span class="status-text">Connecting...</span>
+                    </div>
+                </div>
+                
+                <div id="chat-panel" class="panel-content chat-panel">
+                    <div id="chat-messages" class="chat-messages"></div>
+                    <div class="chat-input-area">
+                        <input type="text" id="chat-input" placeholder="Type a message..." maxlength="500">
+                        <button id="chat-send-btn">➤</button>
+                    </div>
                 </div>
             </aside>
         </div>
@@ -88,4 +163,3 @@
     </script>
 </body>
 </html>
-
