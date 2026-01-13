@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gallery - DrawTogether</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎨</text></svg>">
+</head>
+<body>
+    <div class="gallery-container">
+        <header class="gallery-header">
+            <a href="/" class="logo-small" style="display: inline-block; margin-bottom: 20px;">← Back to DrawTogether</a>
+            <h1 class="logo">🖼️ Gallery</h1>
+            <p class="tagline">Amazing artworks created by our community</p>
+        </header>
+        
+        <div id="gallery-grid" class="gallery-grid">
+            <p class="loading">Loading gallery...</p>
+        </div>
+    </div>
+    
+    <script>
+        async function loadGallery() {
+            const response = await fetch('/api/gallery');
+            const items = await response.json();
+            
+            const grid = document.getElementById('gallery-grid');
+            
+            if (items.length === 0) {
+                grid.innerHTML = '<p class="empty">No artworks yet. Be the first to share!</p>';
+                return;
+            }
+            
+            grid.innerHTML = items.map(item => `
+                <div class="gallery-item" data-id="${item.id}">
+                    <img class="gallery-image" src="${item.image_data}" alt="${item.title}">
+                    <div class="gallery-info">
+                        <div class="gallery-title">${escapeHtml(item.title)}</div>
+                        <div class="gallery-meta">
+                            <span>by ${escapeHtml(item.author)}</span>
+                            <button class="like-btn ${item.liked ? 'liked' : ''}" onclick="likeItem('${item.id}', this)">
+                                ❤️ <span>${item.likes}</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        async function likeItem(id, btn) {
+            await fetch(`/api/gallery/${id}/like`, { method: 'POST' });
+            const countEl = btn.querySelector('span');
+            countEl.textContent = parseInt(countEl.textContent) + 1;
+            btn.classList.add('liked');
+        }
+        
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        
+        // Load theme
+        document.documentElement.setAttribute('data-theme', localStorage.getItem('theme') || 'dark');
+        
+        loadGallery();
+    </script>
+</body>
+</html>
+

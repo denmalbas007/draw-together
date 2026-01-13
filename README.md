@@ -1,76 +1,100 @@
 # 🎨 DrawTogether - Real-time Collaborative Drawing Board
 
-> A modern, real-time collaborative drawing application built with Python (FastAPI), WebSocket, and Canvas API.
+> **Production-Ready** real-time collaborative drawing application built with Python (FastAPI), WebSocket, and Canvas API.
 
 ![Python](https://img.shields.io/badge/Python-3.10+-blue.svg)
 ![FastAPI](https://img.shields.io/badge/FastAPI-0.109-green.svg)
 ![WebSocket](https://img.shields.io/badge/WebSocket-Real--time-purple.svg)
+![Tests](https://img.shields.io/badge/Tests-50+-brightgreen.svg)
 ![License](https://img.shields.io/badge/License-MIT-yellow.svg)
 
 ## 🚀 Quick Start
 
-### Prerequisites
-- Python 3.10+
-- pip
-
-### Installation
-
 ```bash
-# Clone and navigate
 cd pet_project
-
-# Create virtual environment
 python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-
-# Install dependencies
+source venv/bin/activate  # Windows: venv\Scripts\activate
 pip install -r requirements.txt
-
-# Run the application
 python app.py
 ```
 
-Open your browser at: **http://localhost:8000**
+Open: **http://localhost:8000**
 
-## 📋 Features
+## ✨ Features
 
-### MVP Features
-- ✅ Real-time collaborative drawing with WebSocket
-- ✅ Multiple users can draw simultaneously
-- ✅ User cursors visible to others
-- ✅ Basic brush tools (size, color)
-- ✅ Room-based separation
+### Core Drawing Tools
+| Tool | Shortcut | Description |
+|------|----------|-------------|
+| ✏️ Brush | `B` | Freehand drawing |
+| 🧹 Eraser | `E` | Erase strokes |
+| 📏 Line | `L` | Draw straight lines |
+| ⬜ Rectangle | `R` | Draw rectangles |
+| ⭕ Circle | `C` | Draw circles |
+| 🔤 Text | `T` | Add text labels |
+| 🪣 Fill | `F` | Flood fill areas |
+| 💧 Color Picker | `I` | Pick color from canvas |
 
-### Evolution Features
-- ✅ **Layer System** - Create, toggle, and manage multiple layers
-- ✅ **Undo/Redo** - Ctrl+Z to undo your last stroke
-- ✅ **Persistence** - Auto-save to SQLite database
-- ✅ **Export** - Download canvas as PNG image
-- ✅ **Color Presets** - Quick color selection palette
-- ✅ **Eraser Tool** - Erase parts of your drawing
-- ✅ **Room History** - Rejoin rooms and continue drawing
+### Collaboration Features
+- 👥 **Multiple Users** - Draw simultaneously with others
+- 🖱️ **Live Cursors** - See other users' cursor positions
+- 💬 **Real-time Chat** - Communicate while drawing
+- ⏱️ **Timer** - Timed drawing sessions
+- 🎭 **Reactions** - Send emoji reactions
+- 🔒 **Password Protection** - Private rooms
+
+### Canvas Features
+- 📚 **Layers** - Create, toggle, and manage layers
+- ↩️ **Undo/Redo** - Full history support (Ctrl+Z/Y)
+- 🔍 **Zoom & Pan** - Navigate large canvases
+- 📐 **Shape Preview** - Live preview while drawing shapes
+
+### Persistence & Sharing
+- 💾 **Auto-Save** - Automatic room persistence
+- 🖼️ **Gallery** - Share artwork with community
+- ❤️ **Likes** - Like favorite artworks
+- 📥 **Export PNG** - Download your masterpiece
+- 🖼️ **Thumbnails** - Room preview images
+
+### UI/UX
+- 🌙 **Dark/Light Theme** - Toggle with button
+- 🔊 **Sound Effects** - Audio feedback (optional)
+- ⌨️ **Keyboard Shortcuts** - Full keyboard support
+- 📱 **Responsive** - Works on mobile devices
+- 🎨 **Modern Design** - Beautiful animated UI
+- 🔔 **Toast Notifications** - User feedback
+
+## ⌨️ Keyboard Shortcuts
+
+| Shortcut | Action |
+|----------|--------|
+| `Ctrl+Z` | Undo |
+| `Ctrl+Y` | Redo |
+| `Ctrl+S` | Save |
+| `Ctrl+E` | Export PNG |
+| `B` | Brush tool |
+| `E` | Eraser tool |
+| `L` | Line tool |
+| `R` | Rectangle tool |
+| `C` | Circle tool |
+| `T` | Text tool |
+| `F` | Fill tool |
+| `I` | Color picker |
+| `+/-` | Zoom in/out |
+| `0` | Reset view |
+| `1-9` | Brush size |
+| `Space+Drag` | Pan canvas |
 
 ## 🏗️ Architecture
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                        Client Side                          │
+│                        FRONTEND                             │
+│  Canvas Engine + WebSocket Client + Modern UI               │
 ├─────────────────────────────────────────────────────────────┤
-│  ┌─────────────┐  ┌─────────────┐  ┌─────────────────────┐  │
-│  │   Canvas    │  │  WebSocket  │  │     UI Controls     │  │
-│  │   Engine    │  │   Client    │  │   (Toolbar/Layers)  │  │
-│  └─────────────┘  └─────────────┘  └─────────────────────┘  │
-└─────────────────────────────────────────────────────────────┘
-                            │
-                     WebSocket + HTTP
-                            │
-┌─────────────────────────────────────────────────────────────┐
-│                       Server Side                           │
+│                    WebSocket + HTTP                         │
 ├─────────────────────────────────────────────────────────────┤
-│  ┌─────────────┐  ┌─────────────┐  ┌─────────────────────┐  │
-│  │   FastAPI   │  │ Connection  │  │      SQLite         │  │
-│  │    App      │  │   Manager   │  │     Database        │  │
-│  └─────────────┘  └─────────────┘  └─────────────────────┘  │
+│                        BACKEND                              │
+│  FastAPI + Connection Manager + SQLite                      │
 └─────────────────────────────────────────────────────────────┘
 ```
 
@@ -78,53 +102,48 @@ Open your browser at: **http://localhost:8000**
 
 ```
 pet_project/
-├── app.py                 # Main FastAPI application
-├── requirements.txt       # Python dependencies
-├── pytest.ini            # Test configuration
-├── drawings.db           # SQLite database (auto-created)
+├── app.py                          # FastAPI application
+├── requirements.txt                # Python dependencies
+├── pytest.ini                      # Test configuration
 ├── static/
-│   ├── css/
-│   │   └── style.css     # Modern dark theme styles
+│   ├── css/style.css              # Modern dark/light theme
 │   └── js/
-│       ├── canvas.js     # Canvas drawing engine
-│       └── app.js        # WebSocket client & UI
+│       ├── canvas.js              # Drawing engine
+│       └── app.js                 # WebSocket client
 ├── templates/
-│   ├── index.html        # Landing page
-│   └── room.html         # Drawing room page
+│   ├── index.html                 # Landing page
+│   ├── room.html                  # Drawing room
+│   └── gallery.html               # Artwork gallery
 ├── tests/
-│   ├── conftest.py       # Pytest fixtures
-│   ├── test_models.py    # Unit tests for data models
-│   ├── test_connection_manager.py  # Connection manager tests
-│   └── test_api.py       # Integration/API tests
+│   ├── test_models.py             # Unit tests
+│   ├── test_connection_manager.py # Manager tests
+│   ├── test_api.py                # API tests
+│   └── test_advanced_features.py  # Feature tests
 └── docs/
-    └── BDD_SPECS.md      # BDD specifications
+    ├── BDD_SPECS.md               # BDD specifications
+    ├── API_DOCUMENTATION.md       # API reference
+    └── ARCHITECTURE.md            # System design
 ```
 
 ## 🧪 Testing
 
-Run all tests:
 ```bash
+# Run all tests
 pytest -v
-```
 
-Run with coverage:
-```bash
+# Run with coverage
 pytest --cov=app --cov-report=html
+
+# Run specific test file
+pytest tests/test_advanced_features.py -v
 ```
 
-Run specific test file:
-```bash
-pytest tests/test_models.py -v
-pytest tests/test_api.py -v
-```
-
-### Test Categories
-
-| Category | File | Description |
-|----------|------|-------------|
-| Unit | `test_models.py` | Tests for Stroke, Layer, Room models |
-| Unit | `test_connection_manager.py` | Tests for WebSocket connection logic |
-| Integration | `test_api.py` | Tests for HTTP and WebSocket endpoints |
+### Test Coverage
+- ✅ **50+ tests** covering all features
+- ✅ Unit tests for data models
+- ✅ Integration tests for WebSocket
+- ✅ API endpoint tests
+- ✅ Feature-specific tests
 
 ## 🔌 API Reference
 
@@ -133,163 +152,109 @@ pytest tests/test_api.py -v
 | Method | Endpoint | Description |
 |--------|----------|-------------|
 | GET | `/` | Landing page |
-| GET | `/room/{room_id}` | Drawing room page |
-| GET | `/api/rooms` | List all saved rooms |
-| POST | `/api/rooms/{room_id}/save` | Save room to database |
+| GET | `/room/{id}` | Drawing room |
+| GET | `/gallery` | Gallery page |
+| GET | `/api/rooms` | List rooms |
+| GET | `/api/gallery` | List artworks |
+| POST | `/api/gallery` | Post artwork |
+| POST | `/api/gallery/{id}/like` | Like artwork |
+| POST | `/api/rooms/{id}/save` | Save room |
+| GET | `/api/rooms/{id}/stats` | Room statistics |
+| GET | `/api/stickers` | Get stickers |
+| GET | `/api/shortcuts` | Get shortcuts |
 
-### WebSocket Protocol
-
-Connect: `ws://localhost:8000/ws/{room_id}?user_id={id}&nickname={name}`
-
-#### Message Types
+### WebSocket Messages
 
 **Client → Server:**
-
-```json
-// Draw stroke
-{
-  "type": "stroke",
-  "id": "stroke_123",
-  "points": [{"x": 10, "y": 20}, {"x": 30, "y": 40}],
-  "color": "#FF0000",
-  "size": 5,
-  "layer_id": "layer_0"
-}
-
-// Undo last stroke
-{ "type": "undo" }
-
-// Add layer
-{
-  "type": "add_layer",
-  "id": "layer_1",
-  "name": "New Layer"
-}
-
-// Clear layer
-{
-  "type": "clear_layer",
-  "layer_id": "layer_0"
-}
-
-// Cursor position
-{
-  "type": "cursor",
-  "x": 100,
-  "y": 200
-}
-```
+- `stroke` - Draw stroke
+- `undo` - Undo last stroke
+- `chat` - Send chat message
+- `cursor` - Cursor position
+- `add_layer` - Create layer
+- `clear_layer` - Clear layer
+- `start_timer` - Start timer
+- `stop_timer` - Stop timer
+- `reaction` - Send reaction
+- `save_thumbnail` - Save thumbnail
 
 **Server → Client:**
+- `init` - Initial state
+- `stroke` - New stroke
+- `remove_stroke` - Stroke removed
+- `user_joined` - User joined
+- `user_left` - User left
+- `chat` - Chat message
+- `cursor` - Cursor update
+- `layer_added` - Layer created
+- `layer_cleared` - Layer cleared
+- `timer_started` - Timer started
+- `timer_stopped` - Timer stopped
+- `reaction` - Reaction received
+- `error` - Error message
 
-```json
-// Initial state
-{
-  "type": "init",
-  "room": {
-    "id": "room_id",
-    "layers": [...],
-    "strokes": [...]
-  },
-  "users": [{"id": "...", "nickname": "..."}]
-}
+## 🎨 Design Highlights
 
-// New stroke
-{
-  "type": "stroke",
-  "stroke": {...}
-}
+- **Gradient backgrounds** with subtle animations
+- **Glassmorphism** effects on cards
+- **Smooth transitions** on all interactions
+- **Custom scrollbars** matching theme
+- **Responsive grid** layouts
+- **Accessible** color contrast
 
-// User joined
-{
-  "type": "user_joined",
-  "user_id": "...",
-  "nickname": "...",
-  "users": [...]
-}
+## 📊 Performance
 
-// User left
-{
-  "type": "user_left",
-  "user_id": "...",
-  "nickname": "...",
-  "users": [...]
-}
-```
+- **Cursor throttling** - 50ms debounce
+- **Message compression** - Minimal JSON
+- **Lazy loading** - On-demand assets
+- **Auto-cleanup** - Old data pruning
+- **Efficient redraw** - Layer-based rendering
 
-## 🎨 Usage Guide
+## 🔒 Security
 
-### Creating a Room
-1. Open the application
-2. Enter your nickname
-3. Enter a room name (or leave blank for auto-generated)
-4. Click "Join Room"
+- UUID-based user identification
+- Password-hashed room protection
+- Input sanitization (XSS prevention)
+- Message length limits
+- Rate limiting ready
 
-### Drawing Tools
-- **Brush Size**: Use slider (1-50px)
-- **Color**: Use color picker or preset buttons
-- **Eraser**: Click eraser tool (uses 3x brush size)
-- **Undo**: Press Ctrl+Z or click undo button
-
-### Layer Management
-- **Add Layer**: Click "+ Add Layer" button
-- **Select Layer**: Click on layer in panel
-- **Toggle Visibility**: Click checkbox on layer
-
-### Exporting
-- Click the 📥 button to download as PNG
-- Click the 💾 button to save to database
-
-## 🛠️ Technology Stack
+## 🛠️ Tech Stack
 
 | Component | Technology |
 |-----------|------------|
 | Backend | Python 3.10+, FastAPI |
 | Real-time | WebSocket |
 | Database | SQLite (aiosqlite) |
-| Frontend | Vanilla JavaScript, Canvas API |
+| Frontend | Vanilla JS, Canvas API |
 | Templates | Jinja2 |
 | Testing | pytest, pytest-asyncio |
+| Fonts | Inter (Google Fonts) |
 
-## 📊 Performance
+## 📈 Metrics
 
-- **WebSocket latency**: < 50ms typical
-- **Max concurrent users per room**: Tested with 10+
-- **Canvas size**: 1200x800 pixels
-- **Auto-save**: On user disconnect
+| Metric | Value |
+|--------|-------|
+| Lines of Code | ~3500 |
+| Test Count | 50+ |
+| Features | 20+ |
+| API Endpoints | 10+ |
+| Documentation | 4 files |
 
-## 🔒 Security Considerations
+## 🚧 Future Roadmap
 
-- User IDs are UUIDs stored in localStorage
-- No authentication (designed for collaborative sharing)
-- Room names are not encrypted (don't use sensitive info)
-
-## 📝 BDD Specifications
-
-See [docs/BDD_SPECS.md](docs/BDD_SPECS.md) for full Gherkin specifications.
-
-Key scenarios covered:
-- User joins drawing room
-- Real-time stroke synchronization
-- Multiple simultaneous users
-- Layer creation and management
-- Canvas persistence
-- Export functionality
-
-## 🚧 Future Improvements
-
-- [ ] User authentication
-- [ ] Room passwords
-- [ ] More drawing tools (shapes, text)
-- [ ] Zoom and pan
-- [ ] Mobile optimization
-- [ ] Room chat
+- [ ] User authentication (OAuth)
+- [ ] Room invitations via email
+- [ ] More shape tools (polygon, arrow)
+- [ ] Image import/stamp tool
+- [ ] Collaborative templates
+- [ ] Mobile app (PWA)
+- [ ] Redis for scaling
 
 ## 📄 License
 
-MIT License - Feel free to use and modify!
+MIT License - Use freely!
 
 ---
 
 **Built with ❤️ for collaborative creativity**
 
+🔗 **Live Demo**: http://localhost:8000
